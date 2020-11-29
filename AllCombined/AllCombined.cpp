@@ -184,6 +184,7 @@ int main()
             DisplayError();
             break;
         }
+        break;
     }
 
     //HardwareDebugRegisters
