@@ -4,13 +4,14 @@
 #include <iostream>
 #include <windows.h>
 
-int isDebbuged;
 
 //TLS CALLBACK With IsDebuggedPresent
 void NTAPI TLSEntry(PVOID DllHandle, DWORD dwReason, PVOID)
 {
+    int isDebbuged = 0;
     __asm
     {
+        xor eax, eax;
         mov eax, dword ptr fs : [00000030h]
         movzx eax, byte ptr[eax + 2]
         mov isDebbuged, eax
@@ -173,6 +174,19 @@ int main()
         DisplayError();
     }
 
+    //HardwareDebugRegisters
+    CONTEXT ctx = { 0 };
+    HANDLE hThread = GetCurrentThread();
+
+    ctx.ContextFlags = CONTEXT_DEBUG_REGISTERS;
+    if (GetThreadContext(hThread, &ctx))
+    {
+        if ((ctx.Dr0 != 0x00) || (ctx.Dr1 != 0x00) || (ctx.Dr2 != 0x00) || (ctx.Dr3 != 0x00) || (ctx.Dr6 != 0x00) || (ctx.Dr7 != 0x00))
+        {
+            DisplayError();
+        }
+    }
+
     if (IsOllyPresnt())
     {
         DisplayError();
@@ -181,6 +195,22 @@ int main()
     DWORD endTime = GetTickCount();
 
     if (startTime - endTime > 1000)
+    {
+        DisplayError();
+    }
+
+    //NtGlobalFlags
+    BOOL isDebugged = FALSE;
+    _asm
+    {
+        xor eax, eax;			
+        mov eax, fs: [0x30] ;		
+        mov eax, [eax + 0x68];	// PEB+0x68 points to NtGlobalFlags
+        and eax, 0x00000070;	
+        mov isDebugged, eax;			
+    }
+
+    if (isDebugged)
     {
         DisplayError();
     }
