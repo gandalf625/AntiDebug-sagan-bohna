@@ -162,16 +162,28 @@ int main()
 {
     DWORD startTime = GetTickCount();
     Stealth();
-   
 
-    if (IsDebuggerPresent())
-    {
-        DisplayError();
-    }
+    int junk = 3;
 
-    if (IsDebuggerPresentNtQuery())
+    while (true)
     {
-        DisplayError();
+        switch (junk)
+        {
+        case 1 :
+            DisplayError();
+            break;
+        case 2 :
+            break;
+        case 3 :
+            IsDebuggerPresent() ? junk = 1 : junk = 4;
+            continue;
+        case 4 :
+            IsDebuggerPresentNtQuery() ? junk = 5 : junk = 2;
+            continue;
+        case 5 :
+            DisplayError();
+            break;
+        }
     }
 
     //HardwareDebugRegisters
