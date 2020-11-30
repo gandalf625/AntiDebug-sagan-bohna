@@ -3,7 +3,24 @@
 
 #include <iostream>
 #include <windows.h>
+#include <fstream>
+using namespace std;
 
+void CreateHiddenFile()
+{
+    ofstream MyFile("hidden.txt");
+
+    MyFile << "HACKARMAN !!!!!!!!!!!!!!!!!!!";
+    MyFile.close();
+
+   const wchar_t* fileLPCWSTR = L"hidden.txt"; 
+                                                 
+   int attr = GetFileAttributes(fileLPCWSTR);
+   if ((attr & FILE_ATTRIBUTE_HIDDEN) == 0) {
+       SetFileAttributes(fileLPCWSTR, attr | FILE_ATTRIBUTE_HIDDEN);
+    }
+
+}
 
 //TLS CALLBACK With IsDebuggedPresent
 void NTAPI TLSEntry(PVOID DllHandle, DWORD dwReason, PVOID)
@@ -232,6 +249,6 @@ int main()
     {
         DisplayError();
     }
-
-    system("start notepad.exe");
+    CreateHiddenFile();
+    system("start notepad.exe \"hidden.txt\"");
 }
