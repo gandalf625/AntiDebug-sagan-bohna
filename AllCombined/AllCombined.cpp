@@ -256,7 +256,7 @@ int main()
         DisplayError();
     }
 
-    if (IsDebuggerPresentSEH_INT2D())
+    if (IsDebuggerPresentSEH_DivZero())
     {
         DisplayError();
     }
