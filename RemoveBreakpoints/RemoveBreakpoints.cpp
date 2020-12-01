@@ -1,15 +1,14 @@
 #include <iostream>
 
-bool CheckForCCBreakpoint(void* pMemory, size_t SizeToCheck)
+void CheckForCCBreakpoint(void* pMemory, size_t SizeToCheck)
 {
     unsigned char* pTmp = (unsigned char*)pMemory;
     for (size_t i = 0; i < SizeToCheck; i++)
     {
         if (pTmp[i] == 0xCC)
-            return true;
+            pTmp[i] = 0x00;
     }
 
-    return false;
 }
 
 int main()
@@ -18,10 +17,8 @@ int main()
     std::cout << "\nAHOOOJ \n";
 
 
-    if (CheckForCCBreakpoint(&main,20))
-    {
-        std::cout << "Breakpoints not allowed \n";
-    }
+    CheckForCCBreakpoint(&main, 20);
+
 
     std::cout << "Step one \n";
     
