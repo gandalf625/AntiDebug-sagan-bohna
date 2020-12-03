@@ -175,10 +175,21 @@ bool IsDebuggerPresentSEH_INT2D()
     return true;
 }
 
+void CheckForCCBreakpoint(void* pMemory, size_t SizeToCheck)
+{
+    unsigned char* pTmp = (unsigned char*)pMemory;
+    for (size_t i = 0; i < SizeToCheck; i++)
+    {
+        if (pTmp[i] == 0xCC)
+            pTmp[i] = 0x00;
+    }
+}
+
 int main()
 {
     DWORD startTime = GetTickCount();
     Stealth();
+    CheckForCCBreakpoint(&main,20);
 
     int junk = 3;
 
@@ -245,7 +256,7 @@ int main()
         DisplayError();
     }
 
-    if (IsDebuggerPresentSEH_INT2D())
+    if (IsDebuggerPresentSEH_DivZero())
     {
         DisplayError();
     }
